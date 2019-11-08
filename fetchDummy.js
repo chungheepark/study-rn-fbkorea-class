@@ -1,7 +1,6 @@
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default async function fetchDummyData(limit) {
-  console.log('------- fetchDummyData');
   const randomArr = [];
   const randomIds = generateRandomRange(limit);
   randomIds.forEach(id => randomArr.push(sampleData[id]));
@@ -10,13 +9,25 @@ export default async function fetchDummyData(limit) {
   return randomArr;
 }
 
+const generateRandomNum = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 export function generateRandomRange(limit) {
   const min = 0;
   const max = sampleData.length;
   const arr = [];
   for (let i = 0; i < limit; i++) {
-    const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-    arr.push(randomNum);
+    // 동일한 랜덤넘버가 생성될 때가 있어서 중복되지 않은 수가 나올 때 까지 반복 생성한다.
+    while (true) {
+      let randomNum = generateRandomNum(min, max);
+      if (!arr.find(num => num === randomNum)) {
+        arr.push(randomNum);
+        break;
+      } else {
+        console.log('Duplicate:' + randomNum);
+        console.log('skip');
+      }
+    }
   }
   return arr;
 }
